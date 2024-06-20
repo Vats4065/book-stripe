@@ -1,4 +1,5 @@
 require('dotenv').config();
+const stripe = require('stripe')('sk_test_51PRYHRLdUI6Jl6jNlRSgidkQczf0FNEfTLjKIqRAD1aMZEJMSwfOpAccuwWVU2RcHG7H4yyPkvHUp0gYydBhwJ1g00LGCU4PJn');
 const cors = require('cors')
 const express = require('express');
 const db = require('./config/db');

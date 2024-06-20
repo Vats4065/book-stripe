@@ -158,79 +158,119 @@ const getAuthorData = async (req, res) => {
 
 
 const addToCart = async (req, res) => {
+  // try {
+  //   // console.log(req.params);
+  //   // const bookId = req.params.id;
+  //   // console.log("bookId", bookId);
+  //   // const getBook = await bookModel.findById(bookId);
+  //   // console.log("getBook", getBook);
+  //   // const userId = req.user;
+  //   // console.log("userId", userId);
+
+  //   // const quantity = 1;
+  //   // console.log("quantity", quantity);
+  //   // const price = Number.parseInt(getBook.price);
+  //   // console.log("price", typeof price);
+  //   // const total = quantity * price;
+  //   // console.log("total", typeof total);
+
+  //   const obj = {
+  //     userId: userId,
+  //     bookId: bookId,
+  //     price: price,
+  //     quantity: quantity.toString(),
+  //     totalPrice: total.toString(),
+  //   };
+  //   console.log("obj", typeof obj.quantity);
+  //   console.log("obj", typeof obj.totalPrice);
+
+  //   let cart = await cartModel.findOne({ userId: userId });
+
+  //   if (!cart) {
+  //     cart = new cartModel({
+  //       userId: userId,
+  //       items: [],
+  //       totalPrice: 0,
+  //     });
+  //   }
+
+  //   const findItemIndex = cart.items.findIndex((item) =>
+  //     item.bookId.equals(bookId)
+  //   );
+  //   console.log("findItemIndex", findItemIndex);
+
+  //   // if (findItemIndex !== -1) { 
+  //   //   cart.items[findItemIndex].quantity += quantity; 
+  //   //   cart.totalPrice += total; 
+  //   // } 
+  //   if (findItemIndex >= 0) {
+  //     return res.status(404).json({ msg: "You Are Not Created Cart" });
+  //   }
+  //   else {
+  //     cart.items.push({
+  //       bookId: bookId,
+  //       price: price,
+  //       quantity: quantity,
+  //     });
+  //     cart.totalPrice += total;
+  //   }
+
+  //   // cart.totalPrice += total;
+
+  //   console.log("cart", cart);
+
+  //   const savedCart = await cart.save();
+  //   console.log("savedCart", savedCart);
+
+  //   res.status(200).json({
+  //     msg: "Add To Cart",
+  //     cart: savedCart,
+  //   });
+  // } catch (error) {
+  //   res.status(400).json({
+  //     msg: "Error",
+  //     error,
+  //   });
+  // }
+
   try {
-    console.log(req.params);
-    const bookId = req.params.id;
-    console.log("bookId", bookId);
-    const getBook = await bookModel.findById(bookId);
-    console.log("getBook", getBook);
-    const userId = req.user;
-    console.log("userId", userId);
-
+    const userId = req.body.author._id;
+    const bookId = req.body._id;
     const quantity = 1;
-    console.log("quantity", quantity);
-    const price = Number.parseInt(getBook.price);
-    console.log("price", typeof price);
-    const total = quantity * price;
-    console.log("total", typeof total);
-
+    const price = Number.parseInt(req.body.price);
     const obj = {
-      userId: userId,
-      bookId: bookId,
-      price: price,
-      quantity: quantity.toString(),
-      totalPrice: total.toString(),
-    };
-    console.log("obj", typeof obj.quantity);
-    console.log("obj", typeof obj.totalPrice);
+      userId,
+      items: [{
+        bookId,
+        price: req.body.price,
+        quantity,
+      }], totalPrice: quantity * price
 
-    let cart = await cartModel.findOne({ userId: userId });
 
-    if (!cart) {
-      cart = new cartModel({
-        userId: userId,
-        items: [],
-        totalPrice: 0,
-      });
     }
 
-    const findItemIndex = cart.items.findIndex((item) =>
-      item.bookId.equals(bookId)
-    );
-    console.log("findItemIndex", findItemIndex);
 
-    // if (findItemIndex !== -1) { 
-    //   cart.items[findItemIndex].quantity += quantity; 
-    //   cart.totalPrice += total; 
-    // } 
-    if (findItemIndex >= 0) {
-      return res.status(404).json({ msg: "You Are Not Created Cart" });
+    let cart = await cartModel.findOne({ userId });
+    if (cart === null) {
+      let newCart = await cartModel.create(obj)
+      return res.json({ msg: "create new cart", newCart }).status
     }
-    else {
-      cart.items.push({
-        bookId: bookId,
-        price: price,
-        quantity: quantity,
-      });
-      cart.totalPrice += total;
-    }
+    // else {
+    //   let index = cart.items.findIndex((item) => item.bookId === bookId)
+    //   if (index > -1) {
+    //     cart.items[index].quantity += 1
+    //     cart.totalPrice += price
+    //   }
 
-    // cart.totalPrice += total;
+    // }
+    console.log(userId);
 
-    console.log("cart", cart);
 
-    const savedCart = await cart.save();
-    console.log("savedCart", savedCart);
 
-    res.status(200).json({
-      msg: "Add To Cart",
-      cart: savedCart,
-    });
+    console.log(obj);
+    return res.status(200).json({ msg: "addtocart" })
   } catch (error) {
-    res.status(400).json({
-      msg: "Error",
-      error,
-    });
+    return res.status(400).json({ msg: error })
   }
 };
 
@@ -436,6 +476,8 @@ const findData = async (req, res) => {
     });
   }
 };
+
+
 
 module.exports = {
   register,
