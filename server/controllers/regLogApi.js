@@ -115,6 +115,24 @@ const book = async (req, res) => {
   }
 };
 
+
+
+const getAllBook = async (req, res) => {
+  try {
+    const find = await bookModel.find().populate("author");
+    console.log("Find Book");
+    return res.status(200).json({
+      msg: "User find",
+      find
+    });
+  } catch (err) {
+    return res.status(404).json({
+      msg: "User Error",
+      err,
+    });
+  }
+}
+
 const getAuthorData = async (req, res) => {
   const id = req.user;
   try {
@@ -141,6 +159,7 @@ const getAuthorData = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
+    console.log(req.params);
     const bookId = req.params.id;
     console.log("bookId", bookId);
     const getBook = await bookModel.findById(bookId);
@@ -403,6 +422,7 @@ const getUser = async (req, res) => {
 
 const findData = async (req, res) => {
   try {
+
     const find = await User.findById(req.user);
     console.log("Find Data", find);
     res.status(200).json({
@@ -428,5 +448,6 @@ module.exports = {
   getCart,
   updateCart,
   deleteCart,
-  getOrder
+  getOrder,
+  getAllBook
 };

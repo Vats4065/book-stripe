@@ -12,26 +12,26 @@ const bookSchema = new mongoose.Schema({
     title: {
         type: String,
         require: true
-    }, 
+    },
     image: {
         type: String,
         require: true
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "register"            
-     },
-     price: {
+        ref: "register"
+    },
+    price: {
         type: String,
-        require: true 
-     },
-     quantity: {
+        require: true
+    },
+    quantity: {
         type: Number,
         min: [1, "Please Enter Quantity less then 10"],
         require: true
-     } 
-}) 
- 
+    }
+})
+
 const bookModel = mongoose.model('book', bookSchema);
 
 module.exports = bookModel; 

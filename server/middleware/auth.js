@@ -86,10 +86,12 @@ const checkLogin = async (req, res, next) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log(req);
         cb(null, 'public/images/')
     },
     filename: function (req, file, cb) {
         const ext = path.extname(file.originalname)
+            console.log(path);
         cb(null, Date.now() + ext)
     }
 })

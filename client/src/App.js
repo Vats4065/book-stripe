@@ -6,26 +6,23 @@ import Signup from "./components/Signup";
 import Private, { PrivateRole } from "./components/Private";
 import { useEffect } from "react";
 import CreateBook from "./components/CreateBook";
+import Cart from "./components/Cart";
 
 
 
 
 function App() {
-  const getItem = localStorage.getItem("user-token")
 
-  useEffect(()=>{
-    if(getItem){
-      console.log(getItem);
-    }
-  },[getItem])
+
 
   return (
     <>
 
-      {getItem ? <Navbar /> : ""}
+      <Navbar />
       <Routes>
         <Route element={<Private />}>
           <Route exact path="/" element={<Home />} />
+          <Route exact path="/cart" element={<Cart />} />
         </Route>
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/signup" element={<Signup />} />

@@ -12,12 +12,13 @@ export const PrivateRole = () => {
     console.log(user);
     if (user) {
         const userRole = JSON.parse(user)
-        const role = userRole.role
+        const role = userRole?.role
+        console.log(role);
 
-        return role === "Author" ? <Outlet /> : <Navigate to="/" />
+        return (role !== null && role === "Author") ? <Outlet /> : <Navigate to="/" />
     }
     else {
-        return
+        return <Navigate to="/"/>
     }
 }
 
