@@ -43,6 +43,9 @@ const Navbar = () => {
                             {
                                 getItem ? <>
                                     <li className="nav-item">
+                                        <Link className="nav-link" to="/check">AddCard</Link>
+                                    </li>
+                                    <li className="nav-item">
                                         <Link className="nav-link" onClick={() => {
                                             alert("Are you sure to Logout");
                                             if (alert) {

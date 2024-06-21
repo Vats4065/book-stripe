@@ -25,12 +25,13 @@ function App() {
           <Route exact path="/cart" element={<Cart />} />
           <Route exact path="/check" element={<WrapEle />} />
         </Route>
+
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/signup" element={<Signup />} />
         <Route element={<PrivateRole />}>
           <Route exact path="/book" element={<CreateBook />} />
         </Route>
-      </Routes>
+      </Routes >
     </>
   )
 }

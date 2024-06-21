@@ -1,101 +1,92 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 
 import CardSection from './CardSection';
+import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 
-// async function stripeTokenHandler(token) {
-//   const paymentData = { token: token.id };
-
-
-//   const response = await fetch('/charge', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify(paymentData),
-//   });
-//   console.log(response);
-
-//   return response.json();
-// }
-export default function CheckoutForm() {
-  const navigate = useNavigate()
-
-
+export default function CheckoutForm({ customerId }) {
   const stripe = useStripe();
   const elements = useElements();
 
+  // const [token, setToken] = useState({})
+  // const [customers, setCustomers] = useState([]);
+  const data = (localStorage.getItem('user'))
+  const getData = JSON.parse(data)
+  const email = getData.email
+
+
+
+
+  // const [cardData, setCardData] = useState(null);
+
+  // const fetchCardData = async () => {
+  //   try {
+  //     const response = await axios.get(`/api/customer/${customerId}/cards`);
+  //     setCardData(response.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+
+  // useEffect(()=>{fetchCardData()},[])
+
+
+
+
+
+
+
+
+
   const handleSubmit = async (event) => {
-    // We don't want to let default form submission happen here,
-    // which would refresh the page.
     event.preventDefault();
-
-    if (!stripe || !elements) {
-      // Stripe.js hasn't yet loaded.
-      // Make  sure to disable form submission until Stripe.js has loaded.
-      return;
-    }
-
-    const card = elements.getElement(CardElement);
-    const result = await stripe.createToken(card);
-
-
-    if (result.error) {
-      // Show error to your customer.
-      console.log(result.error.message);
-
-
-    }
-    else {
-
-      // console.log(cardNumber);
-      const createCustomer = async () => {
-
-        try {
-          const getItem = localStorage.getItem("user")
-          const user = JSON.parse(getItem)
-          const cardNumber = result?.token?.card?.last4;
-          const cardExpMonth = result?.token?.card?.exp_month;
-          const customerName = user?.name
-          const customerEmail = user?.email
-          const cardExpYear = result?.token?.card?.exp_year;
-          console.log(user);
-          const customer = await stripe.customers.create({
-            name: customerName,
-            email: customerEmail,
-          });
-
-          const paymentMethod = await stripe.paymentMethods.create({
-            type: "card",
-            card: {
-              number: cardNumber,
-              exp_month: cardExpMonth,
-              exp_year: cardExpYear,
-              cvc: result?.token?.card?.cvc,
-            }
-          })
-          await stripe.paymentMethods.attach(paymentMethod?.id, {
-            customer: customer?.id,
-          });
-          toast.success("Card saved successfully")
-        }
-        catch (err) {
-          console.log(err);
-        }
-        // navigate("/")
+    try {
+      const card = elements.getElement(CardElement);
+      const result = await (await stripe.createToken(card)).token;
+      console.log(result);
+      
+  
+ 
+      if (!stripe || !elements) {
+        return
       }
-      createCustomer(); 
+      if (result.error) {
+        console.log(result.error.message);
+      } else if (result.token !== null || '') {
+        const res = await axios.post("http://localhost:8000/api/create-customer", { email, result }, {
+          headers: {
+            Accept: "application/json",
+            'Content-Type': 'application/json'
+          }
+        })
+        console.log(res);
+        localStorage.setItem('customer_stripe_id', res?.data?.customer?.id)
+        toast.success("card added")
+
+
+      };
+    } catch (error) {
+      console.log(error);
     }
   }
-
   return (
     <>
-      <form onSubmit={handleSubmit} className='w-50 mx-auto mt-5 p-5 border rounded shadow-lg'>
+      <form onSubmit={handleSubmit} className='w-50 mx-auto p-5 border shadow-lg mt-5 rounded-3 '>
+        <h1 className='text-center mb-3'>Add Card</h1>
         <CardSection />
-        <button className='btn btn-primary mt-5 shadow' disabled={!stripe}>Confirm order</button>
+        <button disabled={!stripe} className='btn btn-primary mt-3 fw-bolder'>AddNewCard</button>
       </form>
+
+      {/* {cardData && (
+        <div>
+          <h2>Card Data:</h2>
+          <pre>{JSON.stringify(cardData, null, 2)}</pre>
+        </div>
+      )} */}
+
+
     </>
   );
 }

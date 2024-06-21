@@ -17,7 +17,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/', express.static(__dirname + '/public/images'))
 
 
-
 app.get('/', (req, res) => {
     res.send('done');
 })
