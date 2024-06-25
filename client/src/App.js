@@ -5,8 +5,11 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Private, { PrivateRole } from "./components/Private";
 import CreateBook from "./components/CreateBook";
-import Cart from "./components/Cart"
+
 import WrapEle from "./components/WrapEle";
+import Success from "./components/Success";
+import Cart from "./components/Cart";
+
 
 
 
@@ -24,6 +27,7 @@ function App() {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/cart" element={<Cart />} />
           <Route exact path="/check" element={<WrapEle />} />
+          <Route eaxct path="/success" element={<Success/>}></Route>
         </Route>
 
         <Route exact path="/login" element={<Login />} />

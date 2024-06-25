@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 const Home = () => {
 
   const [book, setBook] = useState([])
+  const email = JSON.parse(localStorage.getItem('user')).email
   const [data, setData] = useState({
     userId: "",
     items: [{
@@ -27,6 +28,20 @@ const Home = () => {
 
 
 
+  const handleBuy = async (item) => {
+    console.log(item);
+    const { price, title } = item
+    console.log(price, title);
+    const res = await axios.post("http://localhost:8000/api/create-payment", { price, title, email }, {
+      headers: {
+        Accept: "application/json",
+        'Content-Type': 'application/json'
+      },
+    })
+    console.log(res);
+  }
+
+
   const handleCart = async (item) => {
     console.log(item)
     // const qty = 1
@@ -41,6 +56,8 @@ const Home = () => {
     //   }],
     //   totalPrice: price * qty
     // })
+
+
 
 
 
@@ -81,7 +98,7 @@ const Home = () => {
                         <p className="small text-muted">Title: {item?.title}</p>
                         <p>Author : {item?.author?.name}</p>
                         <button className='btn btn-outline-secondary mb-2' style={{ fontSize: "15px" }} onClick={() => { handleCart(item) }}>Add to cart</button>
-                        <button className='btn btn-outline-dark mb-2 ms-2' style={{ fontSize: "15px" }} >Buy</button>
+                        <button className='btn btn-outline-dark mb-2 ms-2' onClick={() => handleBuy(item)} style={{ fontSize: "15px" }} >Buy</button>
                       </div>
 
                     </div>

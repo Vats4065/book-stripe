@@ -41,7 +41,7 @@ export default function CheckoutForm() {
         })
         console.log("assasaas", res);
         // setCardId(res?.data?.customer?.default_source)
-      
+
         toast.success("card added")
 
       };
@@ -58,7 +58,7 @@ export default function CheckoutForm() {
       const card = elements.getElement(CardElement);
       const result = (await stripe.createToken(card)).token;
       console.log(result);
-      const res = await axios.post(`http://localhost:8000/api/updateCard/${email}`, { cardId, customerId, result }, {
+      const res = await axios.post(`http://localhost:8000/api/updateCard/`, { cardId, customerId, result, email }, {
         headers: {
           Accept: "application/json",
           'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export default function CheckoutForm() {
       if (res.status === 200) {
         toast.success("card updated")
       }
-     
+
     } catch (error) {
       console.log(error.message);
     }
@@ -87,8 +87,7 @@ export default function CheckoutForm() {
       console.log(response);
       if (response?.data?.msg === true) {
         setCardData(response?.data?.card)
-        setCardId(response?.data?.card?.id)
-
+        setCardId(response?.data?.card?.id) 
         setCustomerId(response?.data?.card?.customer)
         setUpdate(response.data.msg)
         console.log("card", response);
@@ -124,8 +123,13 @@ export default function CheckoutForm() {
 
       <div className="text-center mt-5  ">
         {
-          cardData !== null ? <>Data
-          </> : <>Card Not Found</>
+          cardData !== null ? <>
+            <div className="main-card">
+
+            </div>
+          </> : <>
+            Card Not Found
+          </>
         }
       </div>
 

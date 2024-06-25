@@ -80,7 +80,7 @@ const login = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       msg: "Error Login",
       error,
     });

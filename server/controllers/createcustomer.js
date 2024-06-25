@@ -13,7 +13,7 @@ const createCustomer = async (req, res) => {
         const getEmailData = await Model.findOne({ email })
         console.log("asaaa", getEmailData)
 
-        // const cardId = customer.default_source
+
         if (getEmailData) {
             if (!getEmailData.cardId) {
                 const customer = await stripe.customers.create({
@@ -45,13 +45,13 @@ const createCustomer = async (req, res) => {
 
 const updateCard = async (req, res) => {
     try {
-        const { customerId, cardId, result } = req.body
-        const { email } = req.params
+        const { customerId, cardId, result, email } = req.body
+
         console.log("asaaasasasasss", customerId, cardId, result);
         const updateByemail = await Model.findOne({ email })
         console.log("updateByemail", updateByemail.cardId);
         if (updateByemail.cardId === cardId) {
-        
+
             // const payment_Methods = await stripe.paymentMethods.list({
             //      customerId,
             //     cardId
@@ -114,6 +114,51 @@ const getCard = async (req, res) => {
 }
 
 
+const createPayment = async (req, res) => {
+    try {
+
+        const { price, title, email } = req.body
+        console.log(price);
+        const amount = Number(price)*100
+        console.log(amount);
+        
+        const updateByemail = await Model.findOne({ email })
+        if (updateByemail.cardId) {
+            const cardCustomer = await stripe.paymentMethods.retrieve(updateByemail.cardId);
+            console.log(cardCustomer.customer);
+            console.log(updateByemail.cardId);
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount,
+                currency: 'inr',
+                customer: cardCustomer.customer,
+                payment_method_types: ['card'],
+                payment_method: updateByemail.cardId,
+                description: title,
+                confirm: true,
+                return_url: 'http://localhost:3000/success',
+            });
+
+
+            // const charge = await stripe.charges.create({
+            //     amount,
+            //     currency: 'inr',
+            //     source: updateByemail.cardId,
+            //     customer:cardCustomer.customer
+            //   });
+
+            return res.json({ msg: paymentIntent }).status(200)
+        }
+        else {
+            return res.json({ msg: "noCard" }).status(500)
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.json({ msg: error.message }).status(500)
+
+    }
+}
 
 
 
@@ -123,4 +168,9 @@ const getCard = async (req, res) => {
 
 
 
-module.exports = { createCustomer, getCard, updateCard }
+
+
+
+
+
+module.exports = { createCustomer, getCard, updateCard, createPayment }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate()
@@ -24,17 +25,26 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log(data)
-    const res = await axios.post("http://localhost:8000/api/loginUser", data, {
-      headers: {
-        Accept: "application/json",
-        'Content-Type': 'application/json'
-      },
-    })
-    console.log(res);
-    if (res.status === 200) {
-      localStorage.setItem("user-token", res.data.token)
-      localStorage.setItem("user", JSON.stringify(res.data.find))
-     
+    try {
+      const res = await axios.post("http://localhost:8000/api/loginUser", data, {
+        headers: {
+          Accept: "application/json",
+          'Content-Type': 'application/json'
+        },
+      })
+      console.log(res);
+      // console.log(res)
+      if (res.status === 200) {
+        localStorage.setItem("user-token", res.data.token)
+        localStorage.setItem("user", JSON.stringify(res.data.find))
+        navigate('/')
+
+      }
+      else if (res.response.status === 404) {
+        toast.error(res.response.data.msg)
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
