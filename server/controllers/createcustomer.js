@@ -2,6 +2,7 @@
 
 const Model = require('../models/registerSchema');
 
+
 const stripe = require('stripe')('sk_test_51PRYHRLdUI6Jl6jNlRSgidkQczf0FNEfTLjKIqRAD1aMZEJMSwfOpAccuwWVU2RcHG7H4yyPkvHUp0gYydBhwJ1g00LGCU4PJn');
 
 const createCustomer = async (req, res) => {
@@ -110,12 +111,12 @@ const createPayment = async (req, res) => {
     try {
 
         const { price, title, email } = req.body
-        const amount = Number(price)*100
-        
+        const amount = Number(price) * 100
+
         const updateByemail = await Model.findOne({ email })
         if (updateByemail.cardId) {
             const cardCustomer = await stripe.paymentMethods.retrieve(updateByemail.cardId);
-         
+
 
             const paymentIntent = await stripe.paymentIntents.create({
                 amount,
