@@ -1,26 +1,20 @@
 
 
 const Model = require('../models/registerSchema');
-const { modelName } = require('../models/registerSchema');
 
 const stripe = require('stripe')('sk_test_51PRYHRLdUI6Jl6jNlRSgidkQczf0FNEfTLjKIqRAD1aMZEJMSwfOpAccuwWVU2RcHG7H4yyPkvHUp0gYydBhwJ1g00LGCU4PJn');
 
 const createCustomer = async (req, res) => {
 
     const { email, result, } = req?.body
-    console.log(",======", result.card);
     try {
         const getEmailData = await Model.findOne({ email })
-        console.log("asaaa", getEmailData)
-
-
         if (getEmailData) {
             if (!getEmailData.cardId) {
                 const customer = await stripe.customers.create({
                     email,
                     source: result?.id
                 })
-                console.log("Customer", customer)
                 const cardId = customer?.default_source
                 await Model.updateOne({ email }, { $set: { cardId } })
 
@@ -43,46 +37,46 @@ const createCustomer = async (req, res) => {
 }
 
 
-const updateCard = async (req, res) => {
-    try {
-        const { customerId, cardId, result, email } = req.body
+// const updateCard = async (req, res) => {
+//     try {
+//         const { customerId, cardId, result, email } = req.body
 
-        console.log("asaaasasasasss", customerId, cardId, result);
-        const updateByemail = await Model.findOne({ email })
-        console.log("updateByemail", updateByemail.cardId);
-        if (updateByemail.cardId === cardId) {
+//         console.log("asaaasasasasss", customerId, cardId, result);
+//         const updateByemail = await Model.findOne({ email })
+//         console.log("updateByemail", updateByemail.cardId);
+//         if (updateByemail.cardId === cardId) {
 
-            // const payment_Methods = await stripe.paymentMethods.list({
-            //      customerId,
-            //     cardId
-            // });
-            // console.log(payment_Methods);
+//             // const payment_Methods = await stripe.paymentMethods.list({
+//             //      customerId,
+//             //     cardId
+//             // });
+//             // console.log(payment_Methods);
 
 
-            // const paymentMethod = payment_Methods.data.find(method => method.card.id === cardId);
+//             // const paymentMethod = payment_Methods.data.find(method => method.card.id === cardId);
 
-            // console.log(paymentMethod);
+//             // console.log(paymentMethod);
 
-            // const paymentMethod = await stripe.paymentMethods.update(
-            //     'pm_1MqLiJLkdIwHu7ixUEgbFdYF',
-            //     {
-            //         metadata: {
-            //             order_id: '6735',
-            //         },
-            //     }
-            // );
-            return res.status(200).json({ msg: "updated" }, updateCard)
+//             // const paymentMethod = await stripe.paymentMethods.update(
+//             //     'pm_1MqLiJLkdIwHu7ixUEgbFdYF',
+//             //     {
+//             //         metadata: {
+//             //             order_id: '6735',
+//             //         },
+//             //     }
+//             // );
+//             return res.status(200).json({ msg: "updated" }, updateCard)
 
-        }
-        else {
-            return res.status(404).json({ msg: "" })
-        }
+//         }
+//         else {
+//             return res.status(404).json({ msg: "" })
+//         }
 
-    } catch (error) {
+//     } catch (error) {
 
-    }
+//     }
 
-}
+// }
 
 
 const getCard = async (req, res) => {
@@ -91,13 +85,11 @@ const getCard = async (req, res) => {
 
     try {
         const findByEmail = await Model.findOne({ email })
-        console.log("findByEmail", findByEmail);
         const cardId = findByEmail?.cardId
         if (cardId) {
 
 
             const card = await stripe.paymentMethods.retrieve(cardId);
-            console.log("🚀 ~ getCard ~ card:", card)
 
             return res.json({ msg: true, card, update: true }).status(200)
 
@@ -118,15 +110,12 @@ const createPayment = async (req, res) => {
     try {
 
         const { price, title, email } = req.body
-        console.log(price);
         const amount = Number(price)*100
-        console.log(amount);
         
         const updateByemail = await Model.findOne({ email })
         if (updateByemail.cardId) {
             const cardCustomer = await stripe.paymentMethods.retrieve(updateByemail.cardId);
-            console.log(cardCustomer.customer);
-            console.log(updateByemail.cardId);
+         
 
             const paymentIntent = await stripe.paymentIntents.create({
                 amount,
