@@ -5,50 +5,28 @@ import CardSection from './CardSection';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export default function CheckoutForm({ customerId }) {
+export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
+  const [cardData, setCardData] = useState({})
+  const [update, setUpdate] = useState(false)
+  const [cardId, setCardId] = useState('')
+  const [customerId, setCustomerId] = useState('')
 
-  // const [token, setToken] = useState({})
-  // const [customers, setCustomers] = useState([]);
   const data = (localStorage.getItem('user'))
   const getData = JSON.parse(data)
   const email = getData.email
-
-
-
-
-  // const [cardData, setCardData] = useState(null);
-
-  // const fetchCardData = async () => {
-  //   try {
-  //     const response = await axios.get(`/api/customer/${customerId}/cards`);
-  //     setCardData(response.data);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-
-  // useEffect(()=>{fetchCardData()},[])
-
-
-
-
-
-
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const card = elements.getElement(CardElement);
-      const result = await (await stripe.createToken(card)).token;
+      console.log(card);
+      const result = (await stripe.createToken(card)).token;
+
       console.log(result);
-      
-  
- 
+
+
       if (!stripe || !elements) {
         return
       }
@@ -61,30 +39,95 @@ export default function CheckoutForm({ customerId }) {
             'Content-Type': 'application/json'
           }
         })
-        console.log(res);
-        localStorage.setItem('customer_stripe_id', res?.data?.customer?.id)
+        console.log("assasaas", res);
+        // setCardId(res?.data?.customer?.default_source)
+      
         toast.success("card added")
-
 
       };
     } catch (error) {
       console.log(error);
     }
   }
+
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    try {
+      console.log(cardId, customerId);
+      const card = elements.getElement(CardElement);
+      const result = (await stripe.createToken(card)).token;
+      console.log(result);
+      const res = await axios.post(`http://localhost:8000/api/updateCard/${email}`, { cardId, customerId, result }, {
+        headers: {
+          Accept: "application/json",
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log(res);
+      if (res.status === 200) {
+        toast.success("card updated")
+      }
+     
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+
+
+
+
+  const fetchCardData = async () => {
+    try {
+
+      console.log("jmcbjsc",);
+      const response = await axios.get(`http://localhost:8000/api/getCard/${email}`)
+      console.log(response);
+      if (response?.data?.msg === true) {
+        setCardData(response?.data?.card)
+        setCardId(response?.data?.card?.id)
+
+        setCustomerId(response?.data?.card?.customer)
+        setUpdate(response.data.msg)
+        console.log("card", response);
+
+      }
+
+      else {
+        console.log("get", response.data.msg);
+        setUpdate(response.data.msg)
+
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+  // console.log(cardData);
+  useEffect(() => {
+    fetchCardData()
+    console.log(cardData)
+  }, [])
+
   return (
     <>
-      <form onSubmit={handleSubmit} className='w-50 mx-auto p-5 border shadow-lg mt-5 rounded-3 '>
+      <form className='w-50 mx-auto p-5 border shadow-lg mt-5 rounded-3 '>
         <h1 className='text-center mb-3'>Add Card</h1>
         <CardSection />
-        <button disabled={!stripe} className='btn btn-primary mt-3 fw-bolder'>AddNewCard</button>
+        {update === false ? <button disabled={!stripe} onClick={handleSubmit} className='btn btn-primary mt-3 fw-bolder'>Add New Card</button> : <button disabled={!stripe} onClick={handleUpdate} className='btn btn-info mt-3 fw-bolder'>Update Card</button>}
+
       </form>
 
-      {/* {cardData && (
-        <div>
-          <h2>Card Data:</h2>
-          <pre>{JSON.stringify(cardData, null, 2)}</pre>
-        </div>
-      )} */}
+      <div className="text-center mt-5  ">
+        {
+          cardData !== null ? <>Data
+          </> : <>Card Not Found</>
+        }
+      </div>
 
 
     </>

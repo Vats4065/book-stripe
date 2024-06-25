@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { register, login, getUser, findData, book, getAuthorData, addToCart, getCart, updateCart, deleteCart, getOrder, getAllBook } = require('../controllers/regLogApi');
 const { auth, checkLogin, uploadFile } = require('../middleware/auth');
-const {createCustomer, getCard} = require('../controllers/createcustomer');
+const {createCustomer, getCard, updateCard} = require('../controllers/createcustomer');
 
 router.post('/registerUser', register);
 router.post('/loginUser', login);
@@ -18,7 +18,8 @@ router.delete('/deleteCart/:id', auth, deleteCart);
 router.post('/getUserOrder/:id', auth, getOrder);
 router.get("/getAllBook", getAllBook)
 router.post("/create-customer", createCustomer)
-router.get("/getCard",getCard)
+router.get("/getCard/:email",getCard)
+router.post("/updateCard/:email", updateCard)
 
 
 

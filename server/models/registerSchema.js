@@ -17,13 +17,15 @@ const registerSchema = new mongoose.Schema({
     password: {
         type: String,
         require: true
-    },  
+    },
     role: {
         type: String,
         enum: ["Author", "User"],
         require: true
+    },
+    cardId: {
+        type: String
     }
-
 })
 
 const Model = mongoose.model('register', registerSchema);
