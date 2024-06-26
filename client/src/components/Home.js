@@ -5,15 +5,15 @@ const Home = () => {
 
   const [book, setBook] = useState([])
   const email = JSON.parse(localStorage.getItem('user')).email
-  const [data, setData] = useState({
-    userId: "",
-    items: [{
-      bookId: "",
-      price: "",
-      quantity: ""
-    }],
-    totalPrice: ""
-  })
+  // const [data, setData] = useState({
+  //   userId: "",
+  //   items: [{
+  //     bookId: "",
+  //     price: "",
+  //     quantity: ""
+  //   }],
+  //   totalPrice: ""
+  // })
 
 
   useEffect(() => {
@@ -42,34 +42,34 @@ const Home = () => {
   }
 
 
-  const handleCart = async (item) => {
-    console.log(item)
-    // const qty = 1
-    // const price = item?.price
+  // const handleCart = async (item) => {
+  //   console.log(item)
+  //   // const qty = 1
+  //   // const price = item?.price
 
-    // setData({
-    //   ...data, userId: item?.author._id,
-    //   items: [{
-    //     bookId: item?._id,
-    //     price: item?.price,
-    //     qty
-    //   }],
-    //   totalPrice: price * qty
-    // })
-
-
+  //   // setData({
+  //   //   ...data, userId: item?.author._id,
+  //   //   items: [{
+  //   //     bookId: item?._id,
+  //   //     price: item?.price,
+  //   //     qty
+  //   //   }],
+  //   //   totalPrice: price * qty
+  //   // })
 
 
 
-    const res = await axios.post(`http://localhost:8000/api/addCart/${item?._id}`, item, {
-      headers: {
-        Accept: "application/json",
-        'Content-Type': 'application/json'
-      },
-    })
-    console.log(res);
-  }
-  console.log(data);
+
+
+  //   const res = await axios.post(`http://localhost:8000/api/addCart/${item?._id}`, item, {
+  //     headers: {
+  //       Accept: "application/json",
+  //       'Content-Type': 'application/json'
+  //     },
+  //   })
+  //   console.log(res);
+  // }
+  // console.log(data);
 
 
   console.log(book);
@@ -93,11 +93,11 @@ const Home = () => {
                   </div>
                   <div className="card-body pb-0">
                     <div className="d-flex justify-content-between">
-                      <div>
+                      <div> 
                         <p>Book Name: {item?.name}</p>
                         <p className="small text-muted">Title: {item?.title}</p>
                         <p>Author : {item?.author?.name}</p>
-                        <button className='btn btn-outline-secondary mb-2' style={{ fontSize: "15px" }} onClick={() => { handleCart(item) }}>Add to cart</button>
+                        {/* <button className='btn btn-outline-secondary mb-2' style={{ fontSize: "15px" }} onClick={() => { handleCart(item) }}>Add to cart</button> */}
                         <button className='btn btn-outline-dark mb-2 ms-2' onClick={() => handleBuy(item)} style={{ fontSize: "15px" }} >Buy</button>
                       </div>
 
